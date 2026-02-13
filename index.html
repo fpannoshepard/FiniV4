@@ -3,16 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>BlueSwap</title>
+  <title>BA Swap</title>
   <meta name="color-scheme" content="dark" />
   <style>
     :root{
       --bg0:#060a14;
       --bg1:#0b1022;
       --card:#0e1630;
-      --stroke:rgba(255,255,255,.10);
       --text:#eaf0ff;
-      --muted:rgba(234,240,255,.72);
       --muted2:rgba(234,240,255,.55);
       --blue:#2f7bff;
       --blue2:#0a5bff;
@@ -38,6 +36,7 @@
       position:relative;
       overflow-x:hidden;
     }
+    /* subtle black squares */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -69,8 +68,8 @@
       box-shadow: 0 10px 18px rgba(0,0,0,.35);
       outline: 1px solid rgba(255,255,255,.08);
     }
-    .brand h1{font-size:15px;margin:0;letter-spacing:.2px;font-weight:700;}
-    .brand span{display:block;font-size:12px;color:var(--muted2);margin-top:2px;font-weight:500;}
+    .brand h1{font-size:15px;margin:0;letter-spacing:.2px;font-weight:800;}
+    .brand span{display:block;font-size:12px;color:var(--muted2);margin-top:2px;font-weight:600;}
     .nav-right{display:flex;align-items:center;gap:10px;}
 
     .pill{
@@ -101,7 +100,7 @@
     .card-inner{position:relative;padding:18px;}
 
     .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 14px;}
-    .title{font-size:18px;font-weight:750;letter-spacing:.2px;margin:0;}
+    .title{font-size:18px;font-weight:850;letter-spacing:.2px;margin:0;}
     .subtitle{font-size:12px;color:var(--muted2);margin-top:4px;}
 
     .ghost-btn{
@@ -112,7 +111,7 @@
       padding:10px 12px;border-radius:14px;
       cursor:pointer;
       transition: transform var(--t), background var(--t), border-color var(--t);
-      font-weight:650;font-size:13px;
+      font-weight:750;font-size:13px;
     }
     .ghost-btn:hover{background:rgba(255,255,255,.06);transform:translateY(-1px);}
     .ghost-btn:active{transform:translateY(0px);}
@@ -121,7 +120,7 @@
       appearance:none;border:none;
       background: linear-gradient(180deg, var(--blue), var(--blue2));
       color:white;padding:14px 14px;border-radius:16px;
-      cursor:pointer;font-weight:750;letter-spacing:.2px;font-size:14px;width:100%;
+      cursor:pointer;font-weight:850;letter-spacing:.2px;font-size:14px;width:100%;
       transition: transform var(--t), filter var(--t), opacity var(--t);
       box-shadow: 0 16px 30px rgba(47,123,255,.18);
     }
@@ -143,7 +142,7 @@
       background:rgba(255,255,255,.04);
       color:var(--text);cursor:pointer;
       transition: transform var(--t), background var(--t), border-color var(--t);
-      font-weight:750;min-width:160px;justify-content:space-between;
+      font-weight:850;min-width:160px;justify-content:space-between;
     }
     .token-btn:hover{background:rgba(255,255,255,.06);transform:translateY(-1px);}
     .token-left{display:flex;align-items:center;gap:10px;}
@@ -162,7 +161,7 @@
     .amt{flex:1;text-align:right;}
     .amt input{
       width:100%;background:transparent;border:none;outline:none;color:var(--text);
-      font-size:26px;font-weight:800;letter-spacing:.2px;text-align:right;padding:0;
+      font-size:26px;font-weight:900;letter-spacing:.2px;text-align:right;padding:0;
     }
     .amt input::placeholder{color:rgba(234,240,255,.28);}
     .hint{margin-top:8px;font-size:12px;color:var(--muted2);display:flex;justify-content:space-between;align-items:center;gap:12px;}
@@ -173,7 +172,6 @@
       border:1px solid rgba(255,255,255,.10);
       display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow2);
     }
-    .swap-arrow svg{opacity:.85;}
 
     .fineprint{margin-top:14px;font-size:12px;color:rgba(234,240,255,.55);line-height:1.45;}
 
@@ -183,7 +181,7 @@
       display:none;align-items:center;justify-content:center;z-index:999;padding:18px;
     }
     .modal{
-      width:100%;max-width:520px;border-radius:22px;
+      width:100%;max-width:560px;border-radius:22px;
       background: linear-gradient(180deg, rgba(14,22,48,.98), rgba(11,18,39,.98));
       border: 1px solid rgba(255,255,255,.10);
       box-shadow: var(--shadow);
@@ -198,7 +196,7 @@
       display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
       border-bottom:1px solid rgba(255,255,255,.06);
     }
-    .modal-title{margin:0;font-size:22px;font-weight:850;letter-spacing:.2px;}
+    .modal-title{margin:0;font-size:18px;font-weight:950;letter-spacing:.1px;line-height:1.2;}
     .modal-title.danger{color:var(--danger);}
     .modal-title.warn{color:var(--warn);}
     .modal-x{
@@ -207,9 +205,10 @@
       color: var(--text);
       border-radius: 12px;width:40px;height:40px;
       cursor:pointer;transition: transform var(--t), background var(--t);
+      flex:none;
     }
     .modal-x:hover{background:rgba(255,255,255,.07);transform:translateY(-1px);}
-    .modal-bd{padding:16px 18px 18px;color:rgba(234,240,255,.80);line-height:1.55;font-size:14px;}
+    .modal-bd{padding:16px 18px 18px;color:rgba(234,240,255,.86);line-height:1.55;font-size:14px;}
     .bullets{
       margin:14px 0 0;padding:0;list-style:none;
       border:1px solid rgba(255,255,255,.08);
@@ -224,7 +223,7 @@
       background:rgba(255,255,255,.06);
       border:1px solid rgba(255,255,255,.10);
       display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
-      font-weight:800;font-size:11px;color:rgba(234,240,255,.85);
+      font-weight:900;font-size:11px;color:rgba(234,240,255,.85);
     }
     .muted{
       color: rgba(234,240,255,.62);
@@ -237,7 +236,7 @@
       flex:1;padding:13px 14px;border-radius:16px;
       border:1px solid rgba(255,255,255,.10);
       background:rgba(255,255,255,.05);
-      color:var(--text);font-weight:800;cursor:pointer;
+      color:var(--text);font-weight:900;cursor:pointer;
       transition: transform var(--t), background var(--t);
     }
     .btn:hover{background:rgba(255,255,255,.07);transform:translateY(-1px);}
@@ -266,29 +265,63 @@
     .item:hover{background:rgba(255,255,255,.05);}
     .item-left{display:flex;align-items:center;gap:10px;min-width:0;}
     .item-name{
-      font-weight:850;letter-spacing:.15px;font-size:13px;
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px;
+      font-weight:900;letter-spacing:.15px;font-size:13px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px;
     }
-    .badge{
-      font-size:11px;padding:5px 8px;border-radius:999px;
-      border:1px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06);
-      color:rgba(234,240,255,.75);
+    .right-mini{
+      font-size:12px;
+      color: rgba(234,240,255,.70);
       font-weight:800;
     }
-    .badge.danger{
-      border-color: rgba(255,59,59,.35);
-      background: rgba(255,59,59,.12);
-      color: rgba(255,190,190,.95);
+
+    /* Success screen */
+    .success{
+      display:none;
+      position:fixed; inset:0;
+      background:#000;
+      z-index:2000;
+      overflow:hidden;
     }
-    .badge.warn{
-      border-color: rgba(255,204,102,.35);
-      background: rgba(255,204,102,.12);
-      color: rgba(255,232,190,.95);
+    .success img{
+      position:absolute; inset:0;
+      width:100%; height:100%;
+      object-fit:cover;
+      filter: saturate(1.15) contrast(1.08);
+    }
+    .success .overlay{
+      position:absolute; inset:0;
+      background: linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.75));
+    }
+    .success .content{
+      position:relative;
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+      text-align:center;
+    }
+    .success h1{
+      font-size: clamp(34px, 5vw, 74px);
+      margin:0;
+      letter-spacing:1px;
+      font-weight:1000;
+      text-transform:uppercase;
+      text-shadow: 0 18px 40px rgba(0,0,0,.55);
+    }
+    .success .sub{
+      margin-top:14px;
+      font-size: clamp(14px, 2vw, 18px);
+      color: rgba(255,255,255,.86);
+      font-weight:700;
+    }
+    .success .back{
+      position:absolute;
+      top:18px; left:18px;
+      z-index:1;
     }
 
     @media (max-width:540px){
-      .nav{padding:14px 14px;}
       .stage{max-width:100%;}
       .card-inner{padding:16px;}
       .token-btn{min-width:150px;}
@@ -308,7 +341,7 @@
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
         <div>
-          <h1>BlueSwap <span>Demo interface</span></h1>
+          <h1>BA Swap <span>Demo Decentralized Exchange Interface</span></h1>
         </div>
       </div>
 
@@ -317,7 +350,7 @@
           <span class="dot"></span>
           <span id="pillText">Connected</span>
         </div>
-        <button class="ghost-btn" id="connectBtn" type="button">Connect Wallet</button>
+        <button class="ghost-btn" id="connectBtn" type="button">Blockchain Association</button>
       </div>
     </div>
   </header>
@@ -329,13 +362,12 @@
           <div class="card-top">
             <div>
               <p class="title" style="margin:0;">Connect to continue</p>
-              <p class="subtitle">This demo mimics a Uniswap-like swap flow and compliance warnings.</p>
+              <p class="subtitle">Static UI simulation: no real wallet signing, no real blockchain interaction.</p>
             </div>
-            <button class="ghost-btn" id="learnBtn" type="button">How it works</button>
           </div>
 
           <button class="primary" id="connectPrimary" type="button">Connect Wallet</button>
-          <p class="fineprint">Non-custodial demo UI. No real blockchain interaction or wallet signing occurs.</p>
+          <p class="fineprint">This is a front-end prototype for demonstrating user flow and warning screens.</p>
         </div>
       </section>
 
@@ -344,15 +376,14 @@
           <div class="card-top">
             <div>
               <h2 class="title">Swap</h2>
-              <div class="subtitle">Interface-level checks and warnings shown as modals.</div>
+              <div class="subtitle">Prices are simulated; warnings appear only when you select flagged items.</div>
             </div>
-            <button class="ghost-btn" id="settingsBtn" type="button">Settings</button>
           </div>
 
           <div class="panel">
             <div class="panel-hd">
               <span>From</span>
-              <span id="fromHint">Balance: —</span>
+              <span id="fromHint">Price: —</span>
             </div>
             <div class="row">
               <button class="token-btn" id="fromTokenBtn" type="button">
@@ -398,7 +429,7 @@
                 <input id="toAmount" placeholder="0.0" aria-label="Estimated output" disabled />
                 <div class="hint">
                   <span id="toUsd">~$0.00</span>
-                  <span style="color:rgba(234,240,255,.55);font-size:12px;">Route: —</span>
+                  <span style="color:rgba(234,240,255,.55);font-size:12px;">Simulated</span>
                 </div>
               </div>
             </div>
@@ -407,7 +438,7 @@
           <div class="panel">
             <div class="panel-hd">
               <span>Recipient</span>
-              <span id="recHint">Optional</span>
+              <span id="recHint">Required</span>
             </div>
             <div class="row">
               <button class="token-btn" id="recipientBtn" type="button" style="min-width:220px;">
@@ -418,13 +449,16 @@
                 <span class="chev" aria-hidden="true"></span>
               </button>
               <div style="flex:1;text-align:right;color:rgba(234,240,255,.55);font-size:12px;">
-                Address book (demo)
+                &nbsp;
               </div>
             </div>
           </div>
 
           <button class="primary" id="swapBtn" type="button" disabled>Enter amount</button>
-          <p class="fineprint" id="swapFineprint">This is a simulation UI. Warnings are shown based on token/recipient selection.</p>
+
+          <p class="fineprint" id="swapFineprint">
+            No warnings for Lindsay. Brian swaps are blocked at execution time.
+          </p>
         </div>
       </section>
     </div>
@@ -443,31 +477,50 @@
   </div>
 </div>
 
+<!-- Success screen -->
+<div class="success" id="successScreen" aria-hidden="true">
+  <img alt="Crowd cheering" src="https://images.pexels.com/photos/19191521/pexels-photo-19191521.jpeg?cs=srgb&dl=pexels-gergely-badacsonyi-806268712-19191521.jpg&fm=jpg">
+  <div class="overlay"></div>
+  <div class="content">
+    <div>
+      <h1>CONGRATS! YOU PASSED MARKET STRUCTURE</h1>
+      <div class="sub">Transaction completed successfully (simulated)</div>
+    </div>
+  </div>
+  <div class="back">
+    <button class="ghost-btn" type="button" onclick="hideSuccess()">Back</button>
+  </div>
+</div>
+
 <script>
+  // ===== Prices (simulated) =====
+  const PRICES = {
+    "ETH": 2000,
+    "USDC": 1,
+    "BTC": 80000,
+
+    "A7A5": 0.12,
+    "McLarencoin": 3.75,
+    "Murphycoin": 0.0042,
+    "Dutchcoin": 12.40,
+    "Germcoin": 7.10,
+    "Sprucecoin": 0.83,
+    "Nistlercoin": 150.00,
+    "Meadowlarkcoin": 0.02
+  };
+
+  // Token lists (DAI removed, BTC added)
   const TOKENS = [
-    { name: "ETH" },
-    { name: "USDC" },
-    { name: "DAI" },
-    { name: "A7A5", tag: "Not available", badge: "warn" },
-    { name: "McLarencoin", tag: "Flagged", badge: "danger" },
-    { name: "Murphycoin", tag: "High fee", badge: "danger" },
-    { name: "Dutchcoin" },
-    { name: "Germcoin" },
-    { name: "Sprucecoin" },
-    { name: "Nistlercoin" },
-    { name: "Meadowlarkcoin" },
+    "ETH","USDC","BTC",
+    "A7A5","McLarencoin","Murphycoin","Dutchcoin","Germcoin","Sprucecoin","Nistlercoin","Meadowlarkcoin"
   ];
 
-  const RECIPIENTS = [
-    { name: "Lindsay" },
-    { name: "Brian", badge: "danger", tag: "Fraud risk" }
-  ];
+  const RECIPIENTS = ["Lindsay", "Brian"];
 
   let connected = false;
   let fromToken = null;
-  let toToken = null;
+  let toToken = "USDC";
   let recipient = null;
-  let blockedSwap = false;
 
   const $ = (id) => document.getElementById(id);
 
@@ -483,7 +536,9 @@
     $("connectBtn").style.display = "none";
     $("connectedPill").style.display = "inline-flex";
     connected = true;
+    setToToken(toToken);
     refreshSwapButton();
+    recalc();
   }
 
   function openModal({ title, tone = "default", bodyHtml = "", buttons = [] }) {
@@ -520,43 +575,37 @@
   $("modalBackdrop").addEventListener("click", (e) => { if (e.target === $("modalBackdrop")) closeModal(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("modalBackdrop").style.display === "flex") closeModal(); });
 
-  // ===== CONNECT WALLET: Chainalysis + OFAC =====
+  // ===== Compliance modal (title replaced exactly; no Go Back) =====
   function showComplianceModal() {
     openModal({
-      title: "Compliance Screening Notice",
+      title: "Analytics Firms such as Chainalysis screening the wallet address against U.S. sanctions lists, including those maintained by the Office of Foreign Assets Control (OFAC), as well as datasets that associate addresses with illicit activity.",
       bodyHtml: `
         <p>
-          When a wallet connects to a hosted interface, the address may be screened using blockchain analytics services from <strong>Chainalysis</strong>.
-          As part of that screening, the wallet address can be checked against U.S. sanctions lists, including those maintained by the Office of Foreign Assets Control (OFAC),
-          as well as datasets that associate addresses with illicit activity.
-        </p>
-        <p>
-          This is <strong>address-based screening</strong> implemented via API-driven risk signals. It is not identity-based KYC.
+          This is address-based screening implemented via API-driven risk signals. It is not identity-based KYC.
           If an address is identified as a sanctioned entity, it is blocked from further interacting with the interface.
         </p>
       `,
       buttons: [
-        { label: "Go back", onClick: closeModal },
         { label: "Continue", primary: true, onClick: () => { closeModal(); setConnectedUI(); } }
       ]
     });
   }
 
   // ===== Pickers =====
-  function pickerModal({ title, items, placeholder, onPick, renderBadge }) {
+  function pickerModal({ title, items, placeholder, onPick }) {
     let query = "";
 
     function renderList(){
-      const filtered = items.filter(i => i.name.toLowerCase().includes(query.toLowerCase()));
-      const rows = filtered.map((i) => {
-        const badge = renderBadge ? renderBadge(i) : "";
+      const filtered = items.filter(name => name.toLowerCase().includes(query.toLowerCase()));
+      const rows = filtered.map((name) => {
+        const price = PRICES[name] ?? 0;
         return `
-          <div class="item" data-name="${escapeHtml(i.name)}">
+          <div class="item" data-name="${escapeHtml(name)}">
             <div class="item-left">
               <span class="token-icon" style="width:22px;height:22px;border-radius:9px;"></span>
-              <div class="item-name">${escapeHtml(i.name)}</div>
+              <div class="item-name">${escapeHtml(name)}</div>
             </div>
-            ${badge}
+            <div class="right-mini">$${price.toLocaleString(undefined,{maximumFractionDigits: price < 1 ? 4 : 2})}</div>
           </div>
         `;
       }).join("");
@@ -574,11 +623,7 @@
       `;
     }
 
-    openModal({
-      title,
-      bodyHtml: renderList(),
-      buttons: [{ label: "Close", onClick: closeModal }]
-    });
+    openModal({ title, bodyHtml: renderList(), buttons: [{ label: "Close", onClick: closeModal }] });
 
     const searchEl = document.getElementById("pickerSearch");
     searchEl.focus();
@@ -604,28 +649,28 @@
     wireClicks();
   }
 
-  // ===== Blockaid warnings (all non-wallet warnings) =====
-  function showA7A5NotAvailable() {
+  // ===== Blockaid-style warning modals (only show when selected) =====
+  function poweredByBlockaid(){
+    return `<div class="muted">Powered by Blockaid (simulated)</div>`;
+  }
+
+  function warn_NotAvailable_A7A5() {
     openModal({
       title: "Not available",
       tone: "default",
       bodyHtml: `
-        <p style="color:rgba(234,240,255,.85)">
-          You can’t trade this token using the interface.
-        </p>
+        <p style="color:rgba(234,240,255,.85)">You can’t trade this token using the interface.</p>
         <p>
           Unavailable at this time: Uniswap delists tokens deemed to be developed or backed by sanctioned entities,
           such as A7A5 which is Russian-based and backed by the ruble.
         </p>
-        <div class="muted">Powered by Blockaid (simulated)</div>
+        ${poweredByBlockaid()}
       `,
-      buttons: [
-        { label: "Close", onClick: closeModal }  <!-- no Continue -->
-      ]
+      buttons: [{ label: "Close", primary: true, onClick: closeModal }]
     });
   }
 
-  function showMaliciousToken(tokenName) {
+  function warn_Malicious(tokenName) {
     openModal({
       title: "Malicious token detected",
       tone: "danger",
@@ -635,7 +680,7 @@
           <li><span class="flag">!</span><div>Flagged as malicious</div></li>
           <li><span class="flag">!</span><div>Not listed on leading U.S. exchanges</div></li>
         </ul>
-        <div class="muted">Powered by Blockaid (simulated)</div>
+        ${poweredByBlockaid()}
       `,
       buttons: [
         { label: "Go back", onClick: closeModal },
@@ -644,17 +689,17 @@
     });
   }
 
-  function showSellFee100(tokenName) {
+  function warn_100SellFee(tokenName) {
     openModal({
       title: "100% sell fee detected",
       tone: "danger",
       bodyHtml: `
         <p><strong>${escapeHtml(tokenName)}</strong> has been flagged as unsellable. Swapping this token may result in a loss of your funds.</p>
         <ul class="bullets">
-          <li><span class="flag">%</span><div>Charges <span style="color:var(--danger);font-weight:900;">100%</span> fee when sold</div></li>
+          <li><span class="flag">%</span><div>Charges <span style="color:var(--danger);font-weight:950;">100%</span> fee when sold</div></li>
           <li><span class="flag">!</span><div>Not listed on leading U.S. exchanges</div></li>
         </ul>
-        <div class="muted">Powered by Blockaid (simulated)</div>
+        ${poweredByBlockaid()}
       `,
       buttons: [
         { label: "Go back", onClick: closeModal },
@@ -663,22 +708,86 @@
     });
   }
 
-  function showFraudRecipient() {
+  function warn_Impersonator(tokenName) {
     openModal({
-      title: "fraudulent user detected.",
-      tone: "danger",
+      title: "Impersonator",
+      tone: "warn",
       bodyHtml: `
-        <p class="red" style="margin:0;font-weight:900">fraudulent user detected.</p>
-        <p style="margin-top:10px">This counterparty is flagged as high-risk. Swaps to this recipient are blocked in this demo.</p>
-        <div class="muted">Powered by Blockaid (simulated)</div>
+        <p><strong>${escapeHtml(tokenName)}</strong> has been flagged for attempting to impersonate a different token.</p>
+        <p>It may not be the token you intend to swap. Use the contract address to be sure you are swapping the token you intend to.</p>
+        ${poweredByBlockaid()}
       `,
       buttons: [
-        { label: "Close", onClick: closeModal }
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: closeModal }
       ]
     });
   }
 
-  function showSwapSimulationFreeze() {
+  function warn_Honeypot(tokenName) {
+    openModal({
+      title: "Honeypot",
+      tone: "danger",
+      bodyHtml: `
+        <p><strong>${escapeHtml(tokenName)}</strong> has been flagged as a potential honeypot token.</p>
+        <p>This token may prevent selling or impose hidden restrictions. Always do your own research before proceeding.</p>
+        ${poweredByBlockaid()}
+      `,
+      buttons: [
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: closeModal }
+      ]
+    });
+  }
+
+  function warn_Spam(tokenName) {
+    openModal({
+      title: "Spam",
+      tone: "warn",
+      bodyHtml: `
+        <p><strong>${escapeHtml(tokenName)}</strong> has been flagged as a potential spam token based on onchain airdrop activity.</p>
+        <p>Always do your own research before proceeding.</p>
+        ${poweredByBlockaid()}
+      `,
+      buttons: [
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: closeModal }
+      ]
+    });
+  }
+
+  function warn_HighFee(tokenName) {
+    openModal({
+      title: "High buy or sell fee",
+      tone: "danger",
+      bodyHtml: `
+        <p><strong>${escapeHtml(tokenName)}</strong> charges a high fee when bought or sold.</p>
+        <p>Swapping this token may result in a loss of your funds.</p>
+        ${poweredByBlockaid()}
+      `,
+      buttons: [
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: closeModal }
+      ]
+    });
+  }
+
+  function warn_WarningNotOnCEX(tokenName) {
+    openModal({
+      title: "Warning",
+      tone: "warn",
+      bodyHtml: `
+        <p><strong>${escapeHtml(tokenName)}</strong> is not traded on a leading U.S. centralized exchange such as Coinbase, Kraken, or Gemini.</p>
+        ${poweredByBlockaid()}
+      `,
+      buttons: [
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: closeModal }
+      ]
+    });
+  }
+
+  function warn_BlockaidFrozen() {
     openModal({
       title: "Transaction blocked",
       tone: "danger",
@@ -687,11 +796,9 @@
           Blockaid has simulated this transaction before it has been executed and determined that the order called by you and executed by the counterparty are different.
           This transaction and all associated funds have been frozen
         </p>
-        <div class="muted">Powered by Blockaid (simulated)</div>
+        ${poweredByBlockaid()}
       `,
-      buttons: [
-        { label: "Close", primary: true, onClick: closeModal }
-      ]
+      buttons: [{ label: "Close", primary: true, onClick: closeModal }]
     });
   }
 
@@ -699,12 +806,15 @@
   function setFromToken(name){
     fromToken = name;
     $("fromTokenName").textContent = name || "Select token";
+    $("fromHint").textContent = name ? `Price: $${fmtPrice(PRICES[name])}` : "Price: —";
     refreshSwapButton();
+    recalc();
   }
   function setToToken(name){
     toToken = name;
     $("toTokenName").textContent = name || "Select token";
     refreshSwapButton();
+    recalc();
   }
   function setRecipient(name){
     recipient = name;
@@ -712,100 +822,91 @@
     refreshSwapButton();
   }
 
+  function fmtPrice(p){
+    if (!Number.isFinite(p)) return "—";
+    if (p >= 1000) return p.toLocaleString(undefined,{maximumFractionDigits:0});
+    if (p >= 1) return p.toLocaleString(undefined,{maximumFractionDigits:2});
+    return p.toLocaleString(undefined,{maximumFractionDigits:4});
+  }
+
   function refreshSwapButton(){
     const amt = ($("amountInput").value || "").trim();
     const amtNum = Number(amt);
 
-    blockedSwap = false;
-    if (fromToken === "A7A5") blockedSwap = true;
-    if (recipient === "Brian") blockedSwap = true;
-
     const btn = $("swapBtn");
-
     if (!connected) { btn.disabled = true; btn.textContent = "Connect wallet"; return; }
     if (!fromToken || !toToken) { btn.disabled = true; btn.textContent = "Select tokens"; return; }
     if (!amt || !Number.isFinite(amtNum) || amtNum <= 0) { btn.disabled = true; btn.textContent = "Enter amount"; return; }
     if (!recipient) { btn.disabled = true; btn.textContent = "Select counterparty"; return; }
 
-    if (blockedSwap) { btn.disabled = true; btn.textContent = "Blocked"; return; }
-
     btn.disabled = false;
     btn.textContent = "Swap";
   }
+
+  function recalc(){
+    const amtNum = Number(($("amountInput").value || "").trim());
+    if (!fromToken || !toToken || !Number.isFinite(amtNum) || amtNum <= 0){
+      $("amountUsd").textContent = "~$0.00";
+      $("toAmount").value = "";
+      $("toUsd").textContent = "~$0.00";
+      $("toHint").textContent = "Estimated: —";
+      return;
+    }
+    const fromP = PRICES[fromToken];
+    const toP = PRICES[toToken];
+    const usd = amtNum * fromP;
+    const out = usd / toP;
+
+    $("amountUsd").textContent = `~$${usd.toFixed(2)}`;
+    $("toAmount").value = out.toFixed(6).replace(/\.?0+$/,'');
+    $("toUsd").textContent = `~$${usd.toFixed(2)}`;
+    $("toHint").textContent = `Estimated: ${$("toAmount").value} ${toToken}`;
+  }
+
+  // ===== Token selection -> show warnings only when selected =====
+  function maybeTokenWarning(token){
+    // per your mapping:
+    if (token === "A7A5") warn_NotAvailable_A7A5();
+    else if (token === "McLarencoin") warn_Malicious(token);
+    else if (token === "Murphycoin") warn_100SellFee(token);
+    else if (token === "Dutchcoin") warn_Impersonator(token);
+    else if (token === "Germcoin") warn_Honeypot(token);
+    else if (token === "Sprucecoin") warn_Spam(token);
+    else if (token === "Nistlercoin") warn_HighFee(token);
+    else if (token === "Meadowlarkcoin") warn_WarningNotOnCEX(token);
+    // ETH/USDC/BTC: no warnings
+  }
+
+  // ===== Success screen =====
+  function showSuccess(){
+    $("successScreen").style.display = "block";
+    $("successScreen").setAttribute("aria-hidden","false");
+  }
+  function hideSuccess(){
+    $("successScreen").style.display = "none";
+    $("successScreen").setAttribute("aria-hidden","true");
+  }
+  window.hideSuccess = hideSuccess;
 
   // ===== Wire events =====
   $("connectBtn").addEventListener("click", showComplianceModal);
   $("connectPrimary").addEventListener("click", showComplianceModal);
 
-  $("learnBtn").addEventListener("click", () => {
-    openModal({
-      title: "How this demo works",
-      bodyHtml: `
-        <p>This interface simulates a Uniswap-style swap flow with compliance and security warnings.</p>
-        <ul class="bullets">
-          <li><span class="flag">1</span><div>Connect wallet shows a Chainalysis/OFAC address screening notice.</div></li>
-          <li><span class="flag">2</span><div>Selecting certain tokens triggers Blockaid-style warning/blocked modals.</div></li>
-          <li><span class="flag">3</span><div>Selecting certain counterparties can block swapping.</div></li>
-        </ul>
-      `,
-      buttons: [{ label: "Close", primary: true, onClick: closeModal }]
-    });
-  });
-
-  $("settingsBtn").addEventListener("click", () => {
-    openModal({
-      title: "Settings",
-      bodyHtml: `
-        <p style="margin-top:0">This is a demo UI; settings are not functional.</p>
-        <div class="muted">Powered by Blockaid (simulated)</div>
-      `,
-      buttons: [{ label: "Close", onClick: closeModal }]
-    });
-  });
-
   $("fromTokenBtn").addEventListener("click", () => {
     pickerModal({
       title: "Select a token",
       items: TOKENS,
-      placeholder: "Search name…",
-      renderBadge: (t) => {
-        if (!t.tag) return "";
-        const cls = t.badge ? `badge ${t.badge}` : "badge";
-        return `<span class="${cls}">${escapeHtml(t.tag)}</span>`;
-      },
-      onPick: (name) => {
-        if (name === "A7A5") {
-          setFromToken("A7A5");
-          showA7A5NotAvailable();
-          setTimeout(() => {
-            fromToken = null;
-            $("fromTokenName").textContent = "Select token";
-            refreshSwapButton();
-          }, 0);
-          return;
-        }
-        setFromToken(name);
-        if (name === "McLarencoin") showMaliciousToken(name);
-        if (name === "Murphycoin") showSellFee100(name);
-      }
+      placeholder: "Search token…",
+      onPick: (name) => { setFromToken(name); maybeTokenWarning(name); }
     });
   });
 
   $("toTokenBtn").addEventListener("click", () => {
     pickerModal({
       title: "Select a token",
-      items: TOKENS.filter(t => t.name !== "A7A5"),
-      placeholder: "Search name…",
-      renderBadge: (t) => {
-        if (!t.tag) return "";
-        const cls = t.badge ? `badge ${t.badge}` : "badge";
-        return `<span class="${cls}">${escapeHtml(t.tag)}</span>`;
-      },
-      onPick: (name) => {
-        setToToken(name);
-        if (name === "McLarencoin") showMaliciousToken(name);
-        if (name === "Murphycoin") showSellFee100(name);
-      }
+      items: TOKENS,
+      placeholder: "Search token…",
+      onPick: (name) => { setToToken(name); maybeTokenWarning(name); }
     });
   });
 
@@ -814,23 +915,13 @@
       title: "Select counterparty",
       items: RECIPIENTS,
       placeholder: "Search name…",
-      renderBadge: (r) => {
-        if (r.name === "Brian") return `<span class="badge danger">Fraud risk</span>`;
-        return `<span class="badge">Address book</span>`;
-      },
-      onPick: (name) => {
-        setRecipient(name);
-        if (name === "Brian") showFraudRecipient();
-      }
+      onPick: (name) => { setRecipient(name); /* no preview warning per your instruction */ }
     });
   });
 
   $("amountInput").addEventListener("input", () => {
-    const v = Number(($("amountInput").value || "").trim());
-    const usd = Number.isFinite(v) ? (v * 1000) : 0;
-    $("amountUsd").textContent = `~$${usd.toFixed(2)}`;
-    $("toUsd").textContent = `~$${usd.toFixed(2)}`;
     refreshSwapButton();
+    recalc();
   });
 
   $("maxBtn").addEventListener("click", () => {
@@ -842,12 +933,21 @@
     refreshSwapButton();
     if ($("swapBtn").disabled) return;
 
-    // Always show the Blockaid "freeze" warning when swap clicked
-    showSwapSimulationFreeze();
+    // Allowed to press swap for Brian, but blocked at execution time.
+    if (recipient === "Brian") {
+      warn_BlockaidFrozen();
+      return;
+    }
+
+    // No warning for Lindsay; go to success page.
+    if (recipient === "Lindsay") {
+      showSuccess();
+      return;
+    }
   });
 
-  // Default To token for nicer first impression
-  setToToken("USDC");
+  // Default To token
+  setToToken(toToken);
   refreshSwapButton();
 </script>
 </body>
