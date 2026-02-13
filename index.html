@@ -9,7 +9,6 @@
     :root{
       --bg0:#060a14;
       --bg1:#0b1022;
-      --card:#0e1630;
       --text:#eaf0ff;
       --muted2:rgba(234,240,255,.55);
       --blue:#2f7bff;
@@ -36,7 +35,6 @@
       position:relative;
       overflow-x:hidden;
     }
-    /* subtle black squares */
     body::before{
       content:"";
       position:fixed; inset:0;
@@ -145,17 +143,27 @@
       font-weight:850;min-width:160px;justify-content:space-between;
     }
     .token-btn:hover{background:rgba(255,255,255,.06);transform:translateY(-1px);}
-    .token-left{display:flex;align-items:center;gap:10px;}
-    .token-icon{
-      width:26px;height:26px;border-radius:10px;
-      background:rgba(47,123,255,.18);
-      border:1px solid rgba(47,123,255,.35);
-      box-shadow:0 10px 18px rgba(0,0,0,.28);
-    }
-    .token-name{font-size:13px;letter-spacing:.2px;}
+    .token-left{display:flex;align-items:center;gap:10px;min-width:0;}
+    .token-name{font-size:13px;letter-spacing:.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width: 160px;}
     .chev{
       width:10px;height:10px;border-right:2px solid rgba(234,240,255,.70);border-bottom:2px solid rgba(234,240,255,.70);
-      transform: rotate(45deg);margin-left:6px;
+      transform: rotate(45deg);margin-left:6px;flex:none;
+    }
+
+    /* Token icon badge */
+    .ticon{
+      width:28px;height:28px;border-radius:10px;
+      display:inline-flex;align-items:center;justify-content:center;
+      font-weight:950;font-size:12px;letter-spacing:.3px;
+      color: rgba(234,240,255,.92);
+      background: rgba(47,123,255,.18);
+      border: 1px solid rgba(47,123,255,.35);
+      box-shadow:0 10px 18px rgba(0,0,0,.25);
+      flex:none;
+    }
+    .ticon.dark{
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.12);
     }
 
     .amt{flex:1;text-align:right;}
@@ -266,12 +274,13 @@
     .item-left{display:flex;align-items:center;gap:10px;min-width:0;}
     .item-name{
       font-weight:900;letter-spacing:.15px;font-size:13px;
-      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:330px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:280px;
     }
     .right-mini{
       font-size:12px;
       color: rgba(234,240,255,.70);
-      font-weight:800;
+      font-weight:900;
+      flex:none;
     }
 
     /* Success screen */
@@ -388,7 +397,7 @@
             <div class="row">
               <button class="token-btn" id="fromTokenBtn" type="button">
                 <span class="token-left">
-                  <span class="token-icon" id="fromIcon"></span>
+                  <span class="ticon" id="fromIcon">?</span>
                   <span class="token-name" id="fromTokenName">Select token</span>
                 </span>
                 <span class="chev" aria-hidden="true"></span>
@@ -420,7 +429,7 @@
             <div class="row">
               <button class="token-btn" id="toTokenBtn" type="button">
                 <span class="token-left">
-                  <span class="token-icon" id="toIcon" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);"></span>
+                  <span class="ticon dark" id="toIcon">U</span>
                   <span class="token-name" id="toTokenName">Select token</span>
                 </span>
                 <span class="chev" aria-hidden="true"></span>
@@ -443,14 +452,12 @@
             <div class="row">
               <button class="token-btn" id="recipientBtn" type="button" style="min-width:220px;">
                 <span class="token-left">
-                  <span class="token-icon" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);"></span>
+                  <span class="ticon dark" id="recIcon">R</span>
                   <span class="token-name" id="recipientName">Select counterparty</span>
                 </span>
                 <span class="chev" aria-hidden="true"></span>
               </button>
-              <div style="flex:1;text-align:right;color:rgba(234,240,255,.55);font-size:12px;">
-                &nbsp;
-              </div>
+              <div style="flex:1;text-align:right;color:rgba(234,240,255,.55);font-size:12px;">&nbsp;</div>
             </div>
           </div>
 
@@ -509,13 +516,27 @@
     "Meadowlarkcoin": 0.02
   };
 
-  // Token lists (DAI removed, BTC added)
   const TOKENS = [
     "ETH","USDC","BTC",
     "A7A5","McLarencoin","Murphycoin","Dutchcoin","Germcoin","Sprucecoin","Nistlercoin","Meadowlarkcoin"
   ];
 
   const RECIPIENTS = ["Lindsay", "Brian"];
+
+  // ===== Token icon letters/symbols (simple, consistent) =====
+  const ICON_TEXT = {
+    "ETH": "Ξ",
+    "USDC": "U",
+    "BTC": "₿",
+    "A7A5": "A7",
+    "McLarencoin": "MC",
+    "Murphycoin": "MU",
+    "Dutchcoin": "DU",
+    "Germcoin": "GE",
+    "Sprucecoin": "SP",
+    "Nistlercoin": "NI",
+    "Meadowlarkcoin": "ME",
+  };
 
   let connected = false;
   let fromToken = null;
@@ -541,6 +562,7 @@
     recalc();
   }
 
+  // ===== Modal controller (single stack, no auto-close) =====
   function openModal({ title, tone = "default", bodyHtml = "", buttons = [] }) {
     $("modalTitle").textContent = title;
     $("modalTitle").className = "modal-title" + (tone === "danger" ? " danger" : tone === "warn" ? " warn" : "");
@@ -568,20 +590,19 @@
     setTimeout(() => {
       $("modalBackdrop").style.display = "none";
       $("modalFooter").innerHTML = "";
-    }, 150);
+    }, 160);
   }
 
   $("modalCloseX").addEventListener("click", closeModal);
   $("modalBackdrop").addEventListener("click", (e) => { if (e.target === $("modalBackdrop")) closeModal(); });
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("modalBackdrop").style.display === "flex") closeModal(); });
 
-  // ===== Compliance modal (title replaced exactly; no Go Back) =====
+  // ===== Compliance modal message updated (exact sentence) =====
   function showComplianceModal() {
     openModal({
-      title: "Analytics Firms such as Chainalysis screening the wallet address against U.S. sanctions lists, including those maintained by the Office of Foreign Assets Control (OFAC), as well as datasets that associate addresses with illicit activity.",
+      title: "Analytics Firms such as Chainalysis are now screening your wallet address against U.S. sanctions lists, including those maintained by the Office of Foreign Assets Control (OFAC), as well as datasets that associate addresses with illicit activity.",
       bodyHtml: `
         <p>
-          This is address-based screening implemented via API-driven risk signals. It is not identity-based KYC.
           If an address is identified as a sanctioned entity, it is blocked from further interacting with the interface.
         </p>
       `,
@@ -591,7 +612,7 @@
     });
   }
 
-  // ===== Pickers =====
+  // ===== Picker modal (FIXED: close picker BEFORE warnings) =====
   function pickerModal({ title, items, placeholder, onPick }) {
     let query = "";
 
@@ -602,10 +623,10 @@
         return `
           <div class="item" data-name="${escapeHtml(name)}">
             <div class="item-left">
-              <span class="token-icon" style="width:22px;height:22px;border-radius:9px;"></span>
+              <span class="ticon">${escapeHtml(ICON_TEXT[name] || name.slice(0,2).toUpperCase())}</span>
               <div class="item-name">${escapeHtml(name)}</div>
             </div>
-            <div class="right-mini">$${price.toLocaleString(undefined,{maximumFractionDigits: price < 1 ? 4 : 2})}</div>
+            <div class="right-mini">$${fmtPrice(price)}</div>
           </div>
         `;
       }).join("");
@@ -633,8 +654,11 @@
       els.forEach(el => {
         el.addEventListener("click", () => {
           const name = el.getAttribute("data-name");
-          onPick(name);
+
+          // IMPORTANT FIX:
+          // Close picker first, then run onPick (which may open a warning modal).
           closeModal();
+          setTimeout(() => onPick(name), 0);
         });
       });
     }
@@ -649,11 +673,11 @@
     wireClicks();
   }
 
-  // ===== Blockaid-style warning modals (only show when selected) =====
   function poweredByBlockaid(){
     return `<div class="muted">Powered by Blockaid (simulated)</div>`;
   }
 
+  // ===== Blockaid-style warning modals =====
   function warn_NotAvailable_A7A5() {
     openModal({
       title: "Not available",
@@ -802,10 +826,23 @@
     });
   }
 
+  // ===== selection -> warnings only when selected =====
+  function maybeTokenWarning(token){
+    if (token === "A7A5") warn_NotAvailable_A7A5();
+    else if (token === "McLarencoin") warn_Malicious(token);
+    else if (token === "Murphycoin") warn_100SellFee(token);
+    else if (token === "Dutchcoin") warn_Impersonator(token);
+    else if (token === "Germcoin") warn_Honeypot(token);
+    else if (token === "Sprucecoin") warn_Spam(token);
+    else if (token === "Nistlercoin") warn_HighFee(token);
+    else if (token === "Meadowlarkcoin") warn_WarningNotOnCEX(token);
+  }
+
   // ===== UI state helpers =====
   function setFromToken(name){
     fromToken = name;
     $("fromTokenName").textContent = name || "Select token";
+    $("fromIcon").textContent = ICON_TEXT[name] || "?";
     $("fromHint").textContent = name ? `Price: $${fmtPrice(PRICES[name])}` : "Price: —";
     refreshSwapButton();
     recalc();
@@ -813,12 +850,14 @@
   function setToToken(name){
     toToken = name;
     $("toTokenName").textContent = name || "Select token";
+    $("toIcon").textContent = ICON_TEXT[name] || "T";
     refreshSwapButton();
     recalc();
   }
   function setRecipient(name){
     recipient = name;
     $("recipientName").textContent = name || "Select counterparty";
+    $("recIcon").textContent = name ? name.slice(0,1).toUpperCase() : "R";
     refreshSwapButton();
   }
 
@@ -863,20 +902,6 @@
     $("toHint").textContent = `Estimated: ${$("toAmount").value} ${toToken}`;
   }
 
-  // ===== Token selection -> show warnings only when selected =====
-  function maybeTokenWarning(token){
-    // per your mapping:
-    if (token === "A7A5") warn_NotAvailable_A7A5();
-    else if (token === "McLarencoin") warn_Malicious(token);
-    else if (token === "Murphycoin") warn_100SellFee(token);
-    else if (token === "Dutchcoin") warn_Impersonator(token);
-    else if (token === "Germcoin") warn_Honeypot(token);
-    else if (token === "Sprucecoin") warn_Spam(token);
-    else if (token === "Nistlercoin") warn_HighFee(token);
-    else if (token === "Meadowlarkcoin") warn_WarningNotOnCEX(token);
-    // ETH/USDC/BTC: no warnings
-  }
-
   // ===== Success screen =====
   function showSuccess(){
     $("successScreen").style.display = "block";
@@ -915,7 +940,7 @@
       title: "Select counterparty",
       items: RECIPIENTS,
       placeholder: "Search name…",
-      onPick: (name) => { setRecipient(name); /* no preview warning per your instruction */ }
+      onPick: (name) => { setRecipient(name); }
     });
   });
 
@@ -933,21 +958,19 @@
     refreshSwapButton();
     if ($("swapBtn").disabled) return;
 
-    // Allowed to press swap for Brian, but blocked at execution time.
     if (recipient === "Brian") {
       warn_BlockaidFrozen();
       return;
     }
-
-    // No warning for Lindsay; go to success page.
     if (recipient === "Lindsay") {
       showSuccess();
       return;
     }
   });
 
-  // Default To token
+  // Defaults
   setToToken(toToken);
+  $("toHint").textContent = "Estimated: —";
   refreshSwapButton();
 </script>
 </body>
