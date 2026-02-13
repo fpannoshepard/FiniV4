@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BlueSwap</title>
+  <meta name="color-scheme" content="dark" />
+  <style>
+    :root{
+      --bg0:#060a14;
+      --bg1:#0b1022;
+      --card:#0e1630;
+      --stroke:rgba(255,255,255,.10);
+      --text:#eaf0ff;
+      --muted:rgba(234,240,255,.72);
+      --muted2:rgba(234,240,255,.55);
+      --blue:#2f7bff;
+      --blue2:#0a5bff;
+      --danger:#ff3b3b;
+      --warn:#ffcc66;
+      --good:#28d17c;
+      --shadow: 0 22px 55px rgba(0,0,0,.55);
+      --shadow2: 0 10px 28px rgba(0,0,0,.45);
+      --r24:24px;
+      --t: 180ms cubic-bezier(.2,.8,.2,1);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+    }
+
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: var(--font);
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 20% -10%, rgba(47,123,255,.28), transparent 58%),
+        radial-gradient(900px 700px at 85% 0%, rgba(47,123,255,.18), transparent 55%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      position:relative;
+      overflow-x:hidden;
+    }
+    body::before{
+      content:"";
+      position:fixed; inset:0;
+      background-image:
+        linear-gradient(90deg, rgba(0,0,0,.22) 1px, transparent 1px),
+        linear-gradient(rgba(0,0,0,.22) 1px, transparent 1px);
+      background-size: 26px 26px;
+      opacity:.55;
+      pointer-events:none;
+      mix-blend-mode: multiply;
+    }
+
+    .wrap{min-height:100%;display:flex;flex-direction:column;}
+    header{
+      position:sticky;top:0;z-index:10;
+      backdrop-filter: blur(12px);
+      background: linear-gradient(180deg, rgba(6,10,20,.78), rgba(6,10,20,.20));
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .nav{
+      max-width:1080px;margin:0 auto;
+      padding:16px 18px;
+      display:flex;align-items:center;justify-content:space-between;gap:12px;
+    }
+    .brand{display:flex;align-items:center;gap:12px;user-select:none;}
+    .logo{
+      width:40px;height:40px;border-radius:12px;
+      background: linear-gradient(135deg, #000 0%, #000 42%, var(--blue) 42%, var(--blue) 100%);
+      box-shadow: 0 10px 18px rgba(0,0,0,.35);
+      outline: 1px solid rgba(255,255,255,.08);
+    }
+    .brand h1{font-size:15px;margin:0;letter-spacing:.2px;font-weight:700;}
+    .brand span{display:block;font-size:12px;color:var(--muted2);margin-top:2px;font-weight:500;}
+    .nav-right{display:flex;align-items:center;gap:10px;}
+
+    .pill{
+      display:none;align-items:center;gap:8px;
+      padding:9px 12px;border-radius:999px;
+      background: rgba(255,255,255,.06);
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: 0 10px 22px rgba(0,0,0,.25);
+      font-size:12px;color:var(--text);white-space:nowrap;
+    }
+    .pill .dot{width:8px;height:8px;border-radius:50%;background:var(--good);box-shadow:0 0 0 4px rgba(40,209,124,.12);}
+
+    main{flex:1;display:flex;justify-content:center;padding:48px 18px 64px;}
+    .stage{width:100%;max-width:520px;}
+
+    .card{
+      background: linear-gradient(180deg, rgba(14,22,48,.92), rgba(11,18,39,.92));
+      border: 1px solid rgba(255,255,255,.08);
+      box-shadow: var(--shadow);
+      border-radius: var(--r24);
+      overflow:hidden;position:relative;
+    }
+    .card::after{
+      content:"";position:absolute;inset:-2px;
+      background: radial-gradient(420px 240px at 20% 0%, rgba(47,123,255,.18), transparent 60%);
+      pointer-events:none;
+    }
+    .card-inner{position:relative;padding:18px;}
+
+    .card-top{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 2px 14px;}
+    .title{font-size:18px;font-weight:750;letter-spacing:.2px;margin:0;}
+    .subtitle{font-size:12px;color:var(--muted2);margin-top:4px;}
+
+    .ghost-btn{
+      appearance:none;
+      border: 1px solid rgba(255,255,255,.10);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding:10px 12px;border-radius:14px;
+      cursor:pointer;
+      transition: transform var(--t), background var(--t), border-color var(--t);
+      font-weight:650;font-size:13px;
+    }
+    .ghost-btn:hover{background:rgba(255,255,255,.06);transform:translateY(-1px);}
+    .ghost-btn:active{transform:translateY(0px);}
+
+    .primary{
+      appearance:none;border:none;
+      background: linear-gradient(180deg, var(--blue), var(--blue2));
+      color:white;padding:14px 14px;border-radius:16px;
+      cursor:pointer;font-weight:750;letter-spacing:.2px;font-size:14px;width:100%;
+      transition: transform var(--t), filter var(--t), opacity var(--t);
+      box-shadow: 0 16px 30px rgba(47,123,255,.18);
+    }
+    .primary:hover{filter:brightness(1.06);transform:translateY(-1px);}
+    .primary:active{transform:translateY(0px);}
+    .primary:disabled{opacity:.55;cursor:not-allowed;transform:none;filter:none;}
+
+    .panel{
+      background: rgba(0,0,0,.16);
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 18px;
+      padding:14px;margin-top:12px;
+    }
+    .panel-hd{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--muted2);margin-bottom:10px;}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    .token-btn{
+      display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      color:var(--text);cursor:pointer;
+      transition: transform var(--t), background var(--t), border-color var(--t);
+      font-weight:750;min-width:160px;justify-content:space-between;
+    }
+    .token-btn:hover{background:rgba(255,255,255,.06);transform:translateY(-1px);}
+    .token-left{display:flex;align-items:center;gap:10px;}
+    .token-icon{
+      width:26px;height:26px;border-radius:10px;
+      background:rgba(47,123,255,.18);
+      border:1px solid rgba(47,123,255,.35);
+      box-shadow:0 10px 18px rgba(0,0,0,.28);
+    }
+    .token-name{font-size:13px;letter-spacing:.2px;}
+    .chev{
+      width:10px;height:10px;border-right:2px solid rgba(234,240,255,.70);border-bottom:2px solid rgba(234,240,255,.70);
+      transform: rotate(45deg);margin-left:6px;
+    }
+
+    .amt{flex:1;text-align:right;}
+    .amt input{
+      width:100%;background:transparent;border:none;outline:none;color:var(--text);
+      font-size:26px;font-weight:800;letter-spacing:.2px;text-align:right;padding:0;
+    }
+    .amt input::placeholder{color:rgba(234,240,255,.28);}
+    .hint{margin-top:8px;font-size:12px;color:var(--muted2);display:flex;justify-content:space-between;align-items:center;gap:12px;}
+
+    .divider{display:flex;justify-content:center;margin:10px 0;}
+    .swap-arrow{
+      width:42px;height:42px;border-radius:14px;background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.10);
+      display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow2);
+    }
+    .swap-arrow svg{opacity:.85;}
+
+    .fineprint{margin-top:14px;font-size:12px;color:rgba(234,240,255,.55);line-height:1.45;}
+
+    /* ===== Modals ===== */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,.72);
+      display:none;align-items:center;justify-content:center;z-index:999;padding:18px;
+    }
+    .modal{
+      width:100%;max-width:520px;border-radius:22px;
+      background: linear-gradient(180deg, rgba(14,22,48,.98), rgba(11,18,39,.98));
+      border: 1px solid rgba(255,255,255,.10);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      transform: translateY(6px) scale(.99);
+      opacity:0;
+      transition: opacity var(--t), transform var(--t);
+    }
+    .modal-backdrop.show .modal{transform: translateY(0) scale(1);opacity:1;}
+    .modal-hd{
+      padding:18px 18px 12px;
+      display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .modal-title{margin:0;font-size:22px;font-weight:850;letter-spacing:.2px;}
+    .modal-title.danger{color:var(--danger);}
+    .modal-title.warn{color:var(--warn);}
+    .modal-x{
+      background: rgba(255,255,255,.05);
+      border: 1px solid rgba(255,255,255,.10);
+      color: var(--text);
+      border-radius: 12px;width:40px;height:40px;
+      cursor:pointer;transition: transform var(--t), background var(--t);
+    }
+    .modal-x:hover{background:rgba(255,255,255,.07);transform:translateY(-1px);}
+    .modal-bd{padding:16px 18px 18px;color:rgba(234,240,255,.80);line-height:1.55;font-size:14px;}
+    .bullets{
+      margin:14px 0 0;padding:0;list-style:none;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;background:rgba(0,0,0,.16);overflow:hidden;
+    }
+    .bullets li{
+      display:flex;gap:10px;padding:12px 12px;border-top:1px solid rgba(255,255,255,.06);align-items:flex-start;
+    }
+    .bullets li:first-child{border-top:none;}
+    .flag{
+      width:18px;height:18px;border-radius:6px;
+      background:rgba(255,255,255,.06);
+      border:1px solid rgba(255,255,255,.10);
+      display:flex;align-items:center;justify-content:center;flex:none;margin-top:1px;
+      font-weight:800;font-size:11px;color:rgba(234,240,255,.85);
+    }
+    .muted{
+      color: rgba(234,240,255,.62);
+      font-size: 12px;
+      margin-top:10px;
+      text-align:center;
+    }
+    .modal-ft{padding:16px 18px 18px;display:flex;gap:12px;border-top:1px solid rgba(255,255,255,.06);}
+    .btn{
+      flex:1;padding:13px 14px;border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.05);
+      color:var(--text);font-weight:800;cursor:pointer;
+      transition: transform var(--t), background var(--t);
+    }
+    .btn:hover{background:rgba(255,255,255,.07);transform:translateY(-1px);}
+    .btn:active{transform:translateY(0px);}
+    .btn.primary{border:none;background: linear-gradient(180deg, var(--blue), var(--blue2));}
+
+    /* Picker */
+    .picker{display:flex;flex-direction:column;gap:12px;}
+    .search{
+      width:100%;display:flex;gap:10px;align-items:center;
+      padding:12px 12px;border-radius:16px;border:1px solid rgba(255,255,255,.10);
+      background:rgba(0,0,0,.14);
+    }
+    .search input{width:100%;background:transparent;border:none;outline:none;color:var(--text);font-size:14px;}
+    .list{
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;overflow:hidden;background:rgba(0,0,0,.16);
+      max-height:320px;overflow:auto;
+    }
+    .item{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:12px 12px;border-top:1px solid rgba(255,255,255,.06);
+      cursor:pointer;transition: background var(--t);
+    }
+    .item:first-child{border-top:none;}
+    .item:hover{background:rgba(255,255,255,.05);}
+    .item-left{display:flex;align-items:center;gap:10px;min-width:0;}
+    .item-name{
+      font-weight:850;letter-spacing:.15px;font-size:13px;
+      white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:300px;
+    }
+    .badge{
+      font-size:11px;padding:5px 8px;border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);
+      color:rgba(234,240,255,.75);
+      font-weight:800;
+    }
+    .badge.danger{
+      border-color: rgba(255,59,59,.35);
+      background: rgba(255,59,59,.12);
+      color: rgba(255,190,190,.95);
+    }
+    .badge.warn{
+      border-color: rgba(255,204,102,.35);
+      background: rgba(255,204,102,.12);
+      color: rgba(255,232,190,.95);
+    }
+
+    @media (max-width:540px){
+      .nav{padding:14px 14px;}
+      .stage{max-width:100%;}
+      .card-inner{padding:16px;}
+      .token-btn{min-width:150px;}
+      .amt input{font-size:24px;}
+    }
+    button:focus-visible,.token-btn:focus-visible,.ghost-btn:focus-visible,input:focus-visible{
+      outline:2px solid rgba(47,123,255,.85);
+      outline-offset:2px;
+    }
+  </style>
+</head>
+
+<body>
+<div class="wrap">
+  <header>
+    <div class="nav">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>BlueSwap <span>Demo interface</span></h1>
+        </div>
+      </div>
+
+      <div class="nav-right">
+        <div class="pill" id="connectedPill" role="status" aria-live="polite">
+          <span class="dot"></span>
+          <span id="pillText">Connected</span>
+        </div>
+        <button class="ghost-btn" id="connectBtn" type="button">Connect Wallet</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="stage">
+      <section class="card" id="connectCard">
+        <div class="card-inner">
+          <div class="card-top">
+            <div>
+              <p class="title" style="margin:0;">Connect to continue</p>
+              <p class="subtitle">This demo mimics a Uniswap-like swap flow and compliance warnings.</p>
+            </div>
+            <button class="ghost-btn" id="learnBtn" type="button">How it works</button>
+          </div>
+
+          <button class="primary" id="connectPrimary" type="button">Connect Wallet</button>
+          <p class="fineprint">Non-custodial demo UI. No real blockchain interaction or wallet signing occurs.</p>
+        </div>
+      </section>
+
+      <section class="card" id="swapCard" style="display:none;">
+        <div class="card-inner">
+          <div class="card-top">
+            <div>
+              <h2 class="title">Swap</h2>
+              <div class="subtitle">Interface-level checks and warnings shown as modals.</div>
+            </div>
+            <button class="ghost-btn" id="settingsBtn" type="button">Settings</button>
+          </div>
+
+          <div class="panel">
+            <div class="panel-hd">
+              <span>From</span>
+              <span id="fromHint">Balance: —</span>
+            </div>
+            <div class="row">
+              <button class="token-btn" id="fromTokenBtn" type="button">
+                <span class="token-left">
+                  <span class="token-icon" id="fromIcon"></span>
+                  <span class="token-name" id="fromTokenName">Select token</span>
+                </span>
+                <span class="chev" aria-hidden="true"></span>
+              </button>
+              <div class="amt">
+                <input id="amountInput" inputmode="decimal" placeholder="0.0" aria-label="Amount" />
+                <div class="hint">
+                  <span id="amountUsd">~$0.00</span>
+                  <button class="ghost-btn" id="maxBtn" type="button" style="padding:6px 10px;border-radius:12px;">Max</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="divider">
+            <div class="swap-arrow" title="Swap direction (demo)">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                <path d="M7 7h11l-3-3" stroke="rgba(234,240,255,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M17 17H6l3 3" stroke="rgba(234,240,255,.85)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-hd">
+              <span>To</span>
+              <span id="toHint">Estimated: —</span>
+            </div>
+            <div class="row">
+              <button class="token-btn" id="toTokenBtn" type="button">
+                <span class="token-left">
+                  <span class="token-icon" id="toIcon" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);"></span>
+                  <span class="token-name" id="toTokenName">Select token</span>
+                </span>
+                <span class="chev" aria-hidden="true"></span>
+              </button>
+              <div class="amt">
+                <input id="toAmount" placeholder="0.0" aria-label="Estimated output" disabled />
+                <div class="hint">
+                  <span id="toUsd">~$0.00</span>
+                  <span style="color:rgba(234,240,255,.55);font-size:12px;">Route: —</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-hd">
+              <span>Recipient</span>
+              <span id="recHint">Optional</span>
+            </div>
+            <div class="row">
+              <button class="token-btn" id="recipientBtn" type="button" style="min-width:220px;">
+                <span class="token-left">
+                  <span class="token-icon" style="background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.12);"></span>
+                  <span class="token-name" id="recipientName">Select counterparty</span>
+                </span>
+                <span class="chev" aria-hidden="true"></span>
+              </button>
+              <div style="flex:1;text-align:right;color:rgba(234,240,255,.55);font-size:12px;">
+                Address book (demo)
+              </div>
+            </div>
+          </div>
+
+          <button class="primary" id="swapBtn" type="button" disabled>Enter amount</button>
+          <p class="fineprint" id="swapFineprint">This is a simulation UI. Warnings are shown based on token/recipient selection.</p>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- Universal modal -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-hidden="true">
+  <div class="modal" role="document">
+    <div class="modal-hd">
+      <h3 class="modal-title" id="modalTitle">Title</h3>
+      <button class="modal-x" id="modalCloseX" type="button" aria-label="Close">✕</button>
+    </div>
+    <div class="modal-bd" id="modalBody"></div>
+    <div class="modal-ft" id="modalFooter"></div>
+  </div>
+</div>
+
+<script>
+  const TOKENS = [
+    { name: "ETH" },
+    { name: "USDC" },
+    { name: "DAI" },
+    { name: "A7A5", tag: "Not available", badge: "warn" },
+    { name: "McLarencoin", tag: "Flagged", badge: "danger" },
+    { name: "Murphycoin", tag: "High fee", badge: "danger" },
+    { name: "Dutchcoin" },
+    { name: "Germcoin" },
+    { name: "Sprucecoin" },
+    { name: "Nistlercoin" },
+    { name: "Meadowlarkcoin" },
+  ];
+
+  const RECIPIENTS = [
+    { name: "Lindsay" },
+    { name: "Brian", badge: "danger", tag: "Fraud risk" }
+  ];
+
+  let connected = false;
+  let fromToken = null;
+  let toToken = null;
+  let recipient = null;
+  let blockedSwap = false;
+
+  const $ = (id) => document.getElementById(id);
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, s => ({
+      "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+    }[s]));
+  }
+
+  function setConnectedUI() {
+    $("connectCard").style.display = "none";
+    $("swapCard").style.display = "block";
+    $("connectBtn").style.display = "none";
+    $("connectedPill").style.display = "inline-flex";
+    connected = true;
+    refreshSwapButton();
+  }
+
+  function openModal({ title, tone = "default", bodyHtml = "", buttons = [] }) {
+    $("modalTitle").textContent = title;
+    $("modalTitle").className = "modal-title" + (tone === "danger" ? " danger" : tone === "warn" ? " warn" : "");
+    $("modalBody").innerHTML = bodyHtml;
+
+    const footer = $("modalFooter");
+    footer.innerHTML = "";
+    buttons.forEach((b) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "btn" + (b.primary ? " primary" : "");
+      btn.textContent = b.label;
+      btn.addEventListener("click", () => b.onClick && b.onClick());
+      footer.appendChild(btn);
+    });
+
+    $("modalBackdrop").style.display = "flex";
+    $("modalBackdrop").setAttribute("aria-hidden", "false");
+    requestAnimationFrame(() => $("modalBackdrop").classList.add("show"));
+  }
+
+  function closeModal() {
+    $("modalBackdrop").classList.remove("show");
+    $("modalBackdrop").setAttribute("aria-hidden", "true");
+    setTimeout(() => {
+      $("modalBackdrop").style.display = "none";
+      $("modalFooter").innerHTML = "";
+    }, 150);
+  }
+
+  $("modalCloseX").addEventListener("click", closeModal);
+  $("modalBackdrop").addEventListener("click", (e) => { if (e.target === $("modalBackdrop")) closeModal(); });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && $("modalBackdrop").style.display === "flex") closeModal(); });
+
+  // ===== CONNECT WALLET: Chainalysis + OFAC =====
+  function showComplianceModal() {
+    openModal({
+      title: "Compliance Screening Notice",
+      bodyHtml: `
+        <p>
+          When a wallet connects to a hosted interface, the address may be screened using blockchain analytics services from <strong>Chainalysis</strong>.
+          As part of that screening, the wallet address can be checked against U.S. sanctions lists, including those maintained by the Office of Foreign Assets Control (OFAC),
+          as well as datasets that associate addresses with illicit activity.
+        </p>
+        <p>
+          This is <strong>address-based screening</strong> implemented via API-driven risk signals. It is not identity-based KYC.
+          If an address is identified as a sanctioned entity, it is blocked from further interacting with the interface.
+        </p>
+      `,
+      buttons: [
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: () => { closeModal(); setConnectedUI(); } }
+      ]
+    });
+  }
+
+  // ===== Pickers =====
+  function pickerModal({ title, items, placeholder, onPick, renderBadge }) {
+    let query = "";
+
+    function renderList(){
+      const filtered = items.filter(i => i.name.toLowerCase().includes(query.toLowerCase()));
+      const rows = filtered.map((i) => {
+        const badge = renderBadge ? renderBadge(i) : "";
+        return `
+          <div class="item" data-name="${escapeHtml(i.name)}">
+            <div class="item-left">
+              <span class="token-icon" style="width:22px;height:22px;border-radius:9px;"></span>
+              <div class="item-name">${escapeHtml(i.name)}</div>
+            </div>
+            ${badge}
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="picker">
+          <div class="search">
+            <span style="opacity:.8">⌕</span>
+            <input id="pickerSearch" placeholder="${escapeHtml(placeholder)}" value="${escapeHtml(query)}" />
+          </div>
+          <div class="list" id="pickerList">
+            ${rows || `<div style="padding:14px;color:rgba(234,240,255,.60)">No results</div>`}
+          </div>
+        </div>
+      `;
+    }
+
+    openModal({
+      title,
+      bodyHtml: renderList(),
+      buttons: [{ label: "Close", onClick: closeModal }]
+    });
+
+    const searchEl = document.getElementById("pickerSearch");
+    searchEl.focus();
+
+    function wireClicks(){
+      const els = $("modalBody").querySelectorAll(".item");
+      els.forEach(el => {
+        el.addEventListener("click", () => {
+          const name = el.getAttribute("data-name");
+          onPick(name);
+          closeModal();
+        });
+      });
+    }
+
+    searchEl.addEventListener("input", () => {
+      query = searchEl.value || "";
+      $("modalBody").innerHTML = renderList();
+      document.getElementById("pickerSearch").addEventListener("input", searchEl.oninput);
+      wireClicks();
+    });
+
+    wireClicks();
+  }
+
+  // ===== Blockaid warnings (all non-wallet warnings) =====
+  function showA7A5NotAvailable() {
+    openModal({
+      title: "Not available",
+      tone: "default",
+      bodyHtml: `
+        <p style="color:rgba(234,240,255,.85)">
+          You can’t trade this token using the interface.
+        </p>
+        <p>
+          Unavailable at this time: Uniswap delists tokens deemed to be developed or backed by sanctioned entities,
+          such as A7A5 which is Russian-based and backed by the ruble.
+        </p>
+        <div class="muted">Powered by Blockaid (simulated)</div>
+      `,
+      buttons: [
+        { label: "Close", onClick: closeModal }  <!-- no Continue -->
+      ]
+    });
+  }
+
+  function showMaliciousToken(tokenName) {
+    openModal({
+      title: "Malicious token detected",
+      tone: "danger",
+      bodyHtml: `
+        <p><strong>${escapeHtml(tokenName)}</strong> has been flagged as malicious. Always do your own research before proceeding.</p>
+        <ul class="bullets">
+          <li><span class="flag">!</span><div>Flagged as malicious</div></li>
+          <li><span class="flag">!</span><div>Not listed on leading U.S. exchanges</div></li>
+        </ul>
+        <div class="muted">Powered by Blockaid (simulated)</div>
+      `,
+      buttons: [
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: closeModal }
+      ]
+    });
+  }
+
+  function showSellFee100(tokenName) {
+    openModal({
+      title: "100% sell fee detected",
+      tone: "danger",
+      bodyHtml: `
+        <p><strong>${escapeHtml(tokenName)}</strong> has been flagged as unsellable. Swapping this token may result in a loss of your funds.</p>
+        <ul class="bullets">
+          <li><span class="flag">%</span><div>Charges <span style="color:var(--danger);font-weight:900;">100%</span> fee when sold</div></li>
+          <li><span class="flag">!</span><div>Not listed on leading U.S. exchanges</div></li>
+        </ul>
+        <div class="muted">Powered by Blockaid (simulated)</div>
+      `,
+      buttons: [
+        { label: "Go back", onClick: closeModal },
+        { label: "Continue", primary: true, onClick: closeModal }
+      ]
+    });
+  }
+
+  function showFraudRecipient() {
+    openModal({
+      title: "fraudulent user detected.",
+      tone: "danger",
+      bodyHtml: `
+        <p class="red" style="margin:0;font-weight:900">fraudulent user detected.</p>
+        <p style="margin-top:10px">This counterparty is flagged as high-risk. Swaps to this recipient are blocked in this demo.</p>
+        <div class="muted">Powered by Blockaid (simulated)</div>
+      `,
+      buttons: [
+        { label: "Close", onClick: closeModal }
+      ]
+    });
+  }
+
+  function showSwapSimulationFreeze() {
+    openModal({
+      title: "Transaction blocked",
+      tone: "danger",
+      bodyHtml: `
+        <p style="margin-top:0">
+          Blockaid has simulated this transaction before it has been executed and determined that the order called by you and executed by the counterparty are different.
+          This transaction and all associated funds have been frozen
+        </p>
+        <div class="muted">Powered by Blockaid (simulated)</div>
+      `,
+      buttons: [
+        { label: "Close", primary: true, onClick: closeModal }
+      ]
+    });
+  }
+
+  // ===== UI state helpers =====
+  function setFromToken(name){
+    fromToken = name;
+    $("fromTokenName").textContent = name || "Select token";
+    refreshSwapButton();
+  }
+  function setToToken(name){
+    toToken = name;
+    $("toTokenName").textContent = name || "Select token";
+    refreshSwapButton();
+  }
+  function setRecipient(name){
+    recipient = name;
+    $("recipientName").textContent = name || "Select counterparty";
+    refreshSwapButton();
+  }
+
+  function refreshSwapButton(){
+    const amt = ($("amountInput").value || "").trim();
+    const amtNum = Number(amt);
+
+    blockedSwap = false;
+    if (fromToken === "A7A5") blockedSwap = true;
+    if (recipient === "Brian") blockedSwap = true;
+
+    const btn = $("swapBtn");
+
+    if (!connected) { btn.disabled = true; btn.textContent = "Connect wallet"; return; }
+    if (!fromToken || !toToken) { btn.disabled = true; btn.textContent = "Select tokens"; return; }
+    if (!amt || !Number.isFinite(amtNum) || amtNum <= 0) { btn.disabled = true; btn.textContent = "Enter amount"; return; }
+    if (!recipient) { btn.disabled = true; btn.textContent = "Select counterparty"; return; }
+
+    if (blockedSwap) { btn.disabled = true; btn.textContent = "Blocked"; return; }
+
+    btn.disabled = false;
+    btn.textContent = "Swap";
+  }
+
+  // ===== Wire events =====
+  $("connectBtn").addEventListener("click", showComplianceModal);
+  $("connectPrimary").addEventListener("click", showComplianceModal);
+
+  $("learnBtn").addEventListener("click", () => {
+    openModal({
+      title: "How this demo works",
+      bodyHtml: `
+        <p>This interface simulates a Uniswap-style swap flow with compliance and security warnings.</p>
+        <ul class="bullets">
+          <li><span class="flag">1</span><div>Connect wallet shows a Chainalysis/OFAC address screening notice.</div></li>
+          <li><span class="flag">2</span><div>Selecting certain tokens triggers Blockaid-style warning/blocked modals.</div></li>
+          <li><span class="flag">3</span><div>Selecting certain counterparties can block swapping.</div></li>
+        </ul>
+      `,
+      buttons: [{ label: "Close", primary: true, onClick: closeModal }]
+    });
+  });
+
+  $("settingsBtn").addEventListener("click", () => {
+    openModal({
+      title: "Settings",
+      bodyHtml: `
+        <p style="margin-top:0">This is a demo UI; settings are not functional.</p>
+        <div class="muted">Powered by Blockaid (simulated)</div>
+      `,
+      buttons: [{ label: "Close", onClick: closeModal }]
+    });
+  });
+
+  $("fromTokenBtn").addEventListener("click", () => {
+    pickerModal({
+      title: "Select a token",
+      items: TOKENS,
+      placeholder: "Search name…",
+      renderBadge: (t) => {
+        if (!t.tag) return "";
+        const cls = t.badge ? `badge ${t.badge}` : "badge";
+        return `<span class="${cls}">${escapeHtml(t.tag)}</span>`;
+      },
+      onPick: (name) => {
+        if (name === "A7A5") {
+          setFromToken("A7A5");
+          showA7A5NotAvailable();
+          setTimeout(() => {
+            fromToken = null;
+            $("fromTokenName").textContent = "Select token";
+            refreshSwapButton();
+          }, 0);
+          return;
+        }
+        setFromToken(name);
+        if (name === "McLarencoin") showMaliciousToken(name);
+        if (name === "Murphycoin") showSellFee100(name);
+      }
+    });
+  });
+
+  $("toTokenBtn").addEventListener("click", () => {
+    pickerModal({
+      title: "Select a token",
+      items: TOKENS.filter(t => t.name !== "A7A5"),
+      placeholder: "Search name…",
+      renderBadge: (t) => {
+        if (!t.tag) return "";
+        const cls = t.badge ? `badge ${t.badge}` : "badge";
+        return `<span class="${cls}">${escapeHtml(t.tag)}</span>`;
+      },
+      onPick: (name) => {
+        setToToken(name);
+        if (name === "McLarencoin") showMaliciousToken(name);
+        if (name === "Murphycoin") showSellFee100(name);
+      }
+    });
+  });
+
+  $("recipientBtn").addEventListener("click", () => {
+    pickerModal({
+      title: "Select counterparty",
+      items: RECIPIENTS,
+      placeholder: "Search name…",
+      renderBadge: (r) => {
+        if (r.name === "Brian") return `<span class="badge danger">Fraud risk</span>`;
+        return `<span class="badge">Address book</span>`;
+      },
+      onPick: (name) => {
+        setRecipient(name);
+        if (name === "Brian") showFraudRecipient();
+      }
+    });
+  });
+
+  $("amountInput").addEventListener("input", () => {
+    const v = Number(($("amountInput").value || "").trim());
+    const usd = Number.isFinite(v) ? (v * 1000) : 0;
+    $("amountUsd").textContent = `~$${usd.toFixed(2)}`;
+    $("toUsd").textContent = `~$${usd.toFixed(2)}`;
+    refreshSwapButton();
+  });
+
+  $("maxBtn").addEventListener("click", () => {
+    $("amountInput").value = "1";
+    $("amountInput").dispatchEvent(new Event("input"));
+  });
+
+  $("swapBtn").addEventListener("click", () => {
+    refreshSwapButton();
+    if ($("swapBtn").disabled) return;
+
+    // Always show the Blockaid "freeze" warning when swap clicked
+    showSwapSimulationFreeze();
+  });
+
+  // Default To token for nicer first impression
+  setToToken("USDC");
+  refreshSwapButton();
+</script>
+</body>
+</html>
